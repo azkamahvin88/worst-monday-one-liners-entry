@@ -47,11 +47,16 @@ def main() -> None:
     path = os.path.join(output_dir, "entry.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write(LINE + "\n")
-    # Read back and verify exactly what was written.
+    # Read back and verify exactly what was written: the file must hold the
+    # line plus exactly one trailing newline, so the gated text (the file
+    # with that newline stripped) is the line itself, 1-140 characters.
     with open(path, "r", encoding="utf-8") as f:
         written = f.read()
     if written != LINE + "\n":
         raise ValueError("entry.txt content mismatch")
+    gated_text = written[:-1]
+    if gated_text != LINE or not 1 <= len(gated_text) <= 140:
+        raise ValueError("gated text is not the entry line")
     print(f"wrote entry.txt ({length} characters + newline)")
 
 
